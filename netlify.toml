@@ -1,0 +1,46 @@
+# Netlify configuration for Flappy Bird Dark Edition
+[build]
+  publish = "dist"
+  command = "python -m pygbag --width 288 --height 512 --name flappy-bird-dark --title 'Flappy Bird - Dark Web Edition' --template index.html --icon flappy.ico --optimize main.py"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+
+# Headers for WebAssembly support
+[[headers]]
+  for = "*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Opener-Policy = "same-origin"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Opener-Policy = "same-origin"
+
+[[headers]]
+  for = "*.html"
+  [headers.values]
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Opener-Policy = "same-origin"
+
+# Redirect rules
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Build dependencies
+[build.dependencies]
+  python = "3.11"
+  
+# Environment variables for build
+[context.production.environment]
+  NODE_VERSION = "18"
+  PYTHON_VERSION = "3.11"
+  
+# Enable forms (if needed for feedback)
+[build.processing]
+  skip_processing = false

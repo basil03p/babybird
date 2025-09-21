@@ -42,6 +42,8 @@ class Player(Entity):
             self.config.sounds.hit.play()
             if self.crash_entity == "pipe":
                 self.config.sounds.die.play()
+                # Play death BGM
+                self.config.sounds.play_death_bgm()
             self.reset_vals_crash()
 
     def reset_vals_normal(self) -> None:

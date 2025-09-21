@@ -2,10 +2,14 @@ from .background import Background
 from .entity import Entity
 from .floor import Floor
 from .game_over import GameOver
+from .dark_game_over import DarkGameOver
 from .pipe import Pipe, Pipes
 from .player import Player, PlayerMode
 from .score import Score
 from .welcome_message import WelcomeMessage
+from .dark_welcome_message import DarkWelcomeMessage
+from .video_player import VideoPlayer
+from .bird_selection import BirdSelection
 
 __all__ = [
     "Background",
@@ -16,4 +20,10 @@ __all__ = [
     "Score",
     "Entity",
     "WelcomeMessage",
+    "DarkWelcomeMessage",
+    "GameOver",
+    "DarkGameOver",
+    "PlayerMode",
+    "VideoPlayer",
+    "BirdSelection",
 ]
