@@ -95,7 +95,12 @@ class Flappy:
         while True:
             for event in pygame.event.get():
                 self.check_quit_event(event)
-                if self.is_tap_event(event):
+                
+                # Check for dark welcome message input if using web mode
+                if self.is_web and hasattr(self.welcome_message, 'handle_input'):
+                    if self.welcome_message.handle_input(event):
+                        return
+                elif self.is_tap_event(event):
                     return
 
             self.background.tick()
