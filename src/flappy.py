@@ -8,16 +8,15 @@ from .entities import (
     Background,
     Floor,
     GameOver,
-    DarkGameOver,
+    EnhancedGameOver,
     Pipes,
     Player,
     PlayerMode,
     Score,
     WelcomeMessage,
-    DarkWelcomeMessage,
     VideoPlayer,
 )
-from .utils import GameConfig, Images, Sounds, Window, DarkTheme
+from .utils import GameConfig, Images, Sounds, Window
 
 
 class Flappy:
@@ -73,14 +72,8 @@ class Flappy:
             self.background = Background(self.config)
             self.floor = Floor(self.config)
             self.player = Player(self.config)
-            
-            # Use dark theme welcome message for web, regular for desktop
-            if self.is_web:
-                self.welcome_message = DarkWelcomeMessage(self.config)
-                self.game_over_message = DarkGameOver(self.config)
-            else:
-                self.welcome_message = WelcomeMessage(self.config)
-                self.game_over_message = GameOver(self.config)
+            self.welcome_message = WelcomeMessage(self.config)
+            self.game_over_message = EnhancedGameOver(self.config)
             self.pipes = Pipes(self.config)
             self.score = Score(self.config)
             await self.splash()
@@ -95,12 +88,7 @@ class Flappy:
         while True:
             for event in pygame.event.get():
                 self.check_quit_event(event)
-                
-                # Check for dark welcome message input if using web mode
-                if self.is_web and hasattr(self.welcome_message, 'handle_input'):
-                    if self.welcome_message.handle_input(event):
-                        return
-                elif self.is_tap_event(event):
+                if self.is_tap_event(event):
                     return
 
             self.background.tick()
@@ -161,33 +149,51 @@ class Flappy:
         self.pipes.stop()
         self.floor.stop()
 
-        # Wait for player to hit the ground
+        # Optimized game over sequence - reduced latency
+        death_sound_finished = False
+        player_hit_ground = False
+        game_over_start_time = pygame.time.get_ticks()
+        
         while True:
+            current_time = pygame.time.get_ticks()
+            
+            # Process events efficiently
             for event in pygame.event.get():
                 self.check_quit_event(event)
-                if self.is_tap_event(event):
-                    if self.player.y + self.player.h >= self.floor.y - 1:
-                        break
+                # Allow restart after minimum conditions are met
+                if self.is_tap_event(event) and (death_sound_finished or current_time - game_over_start_time > 1000):
+                    if player_hit_ground or current_time - game_over_start_time > 2000:
+                        # Stop sounds and restart immediately
+                        self.config.sounds.stop_all()
+                        return
 
             self.background.tick()
             self.floor.tick()
             self.pipes.tick()
             self.score.tick()
             self.player.tick()
-            self.game_over_message.tick()
+            
+            # Check if player hit the ground
+            if self.player.y + self.player.h >= self.floor.y - 1:
+                player_hit_ground = True
+            
+            # Check if death sound finished playing (or timeout after 3 seconds)
+            if not self.config.sounds.is_death_sound_playing() or current_time - game_over_start_time > 3000:
+                death_sound_finished = True
+            
+            # Show game over message immediately when player hits ground
+            if player_hit_ground:
+                self.game_over_message.tick()
 
             self.config.tick()
             pygame.display.update()
             await asyncio.sleep(0)
-            
-            if self.player.y + self.player.h >= self.floor.y - 1:
-                break
 
-        # Stop any remaining sounds before video
+        # Stop any remaining sounds before restarting
         self.config.sounds.stop_all()
         
-        # Show video after crash
-        await self.show_game_over_video()
+        # Skip video temporarily to prevent crashes
+        # await self.show_game_over_video()
 
     async def show_game_over_video(self):
         """Show game over video with skip option"""

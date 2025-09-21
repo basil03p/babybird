@@ -1,7 +1,7 @@
-# Netlify configuration for Flappy Bird Dark Edition
+# Netlify configuration for Flappy Bird Web Edition
 [build]
-  publish = "dist"
-  command = "python -m pygbag --width 288 --height 512 --name flappy-bird-dark --title 'Flappy Bird - Dark Web Edition' --template index.html --icon flappy.ico --optimize main.py"
+  publish = "netlify-deploy/dist"
+  command = "python build_web.py"
 
 [build.environment]
   PYTHON_VERSION = "3.11"

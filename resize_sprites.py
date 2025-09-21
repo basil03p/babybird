@@ -12,8 +12,8 @@ def get_target_size(sprite_name):
     """Get the expected size for different sprite types"""
     # Define expected sizes for different game assets
     sprite_sizes = {
-        # Bird sprites (making blue bird bigger)
-        'bird': (45, 32),  # Increased from (34, 24) - 32% larger
+        # Bird sprites (restored to original size)
+        'bird': (34, 24),  # Restored to original size
         
         # UI elements  
         'message.png': (184, 267),      # Welcome message

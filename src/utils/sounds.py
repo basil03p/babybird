@@ -10,43 +10,33 @@ class Sounds:
     wing: pygame.mixer.Sound
 
     def __init__(self) -> None:
+        # Initialize sounds
         self.die = pygame.mixer.Sound("assets/audio/die.wav")
         self.hit = pygame.mixer.Sound("assets/audio/hit.wav")
         self.point = pygame.mixer.Sound("assets/audio/point.wav")
         self.swoosh = pygame.mixer.Sound("assets/audio/swoosh.wav")
         self.wing = pygame.mixer.Sound("assets/audio/wing.wav")
         
-        # Background music support
-        self.bgm_playing = False
-        self.death_bgm_path = "assets/audio/death_bgm.wav"  # You can add this file
+        # Death sound tracking
+        self.death_channel = None
         
     def play_death_bgm(self) -> None:
-        """Play death background music"""
+        """Play death sound and track its channel"""
         try:
-            if os.path.exists(self.death_bgm_path):
-                pygame.mixer.music.load(self.death_bgm_path)
-                pygame.mixer.music.play(-1)  # Loop indefinitely
-                self.bgm_playing = True
-                print("Playing death BGM")
-            else:
-                print(f"Death BGM file not found: {self.death_bgm_path}")
-                # Play death sound longer as fallback
-                self.die.play()
+            # Play the death sound effect and track its channel
+            self.death_channel = self.die.play()
         except Exception as e:
-            print(f"Error playing death BGM: {e}")
-            self.die.play()
+            print(f"Error playing death sound: {e}")
     
-    def stop_bgm(self) -> None:
-        """Stop background music"""
-        if self.bgm_playing:
-            pygame.mixer.music.stop()
-            self.bgm_playing = False
-            print("Stopped BGM")
-
+    def is_death_sound_playing(self) -> bool:
+        """Check if death sound is still playing"""
+        if self.death_channel:
+            return self.death_channel.get_busy()
+        return False
+    
     def stop_all(self) -> None:
         """Stop all currently playing sounds"""
         pygame.mixer.stop()
-        self.stop_bgm()
         
     def stop_sound(self, sound_name: str) -> None:
         """Stop a specific sound"""

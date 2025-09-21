@@ -41,8 +41,7 @@ class Player(Entity):
             self.stop_wings()
             self.config.sounds.hit.play()
             if self.crash_entity == "pipe":
-                self.config.sounds.die.play()
-                # Play death BGM
+                # Play death sound (die.wav)
                 self.config.sounds.play_death_bgm()
             self.reset_vals_crash()
 
