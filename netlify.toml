@@ -1,10 +1,26 @@
-# Netlify configuration for Flappy Bird Web Edition
+# Netlify configuration for Baby Bird - Optimized
 [build]
-  publish = "netlify-deploy/dist"
-  command = "python build_web.py"
+  publish = "dist"
+  command = "pip install pygame pygbag pillow && python -m pygbag --template index.html --icon flappy.ico main.py"
 
 [build.environment]
   PYTHON_VERSION = "3.11"
+  PIP_CACHE_DIR = "/opt/build/cache/pip"
+
+# Build caching for faster deploys
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
 
 # Headers for WebAssembly support
 [[headers]]
